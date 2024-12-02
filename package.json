@@ -1,0 +1,11 @@
+{
+  "name": "react-express-tailwind-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run start --prefix frontend\" \"npm run start --prefix backend\"",
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run nodemon --prefix backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
+}
