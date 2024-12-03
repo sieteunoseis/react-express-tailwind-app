@@ -1,7 +1,8 @@
 {
   "name": "react-express-tailwind-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "start": "concurrently \"npm run start --prefix frontend\" \"npm run start --prefix backend\"",
     "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run nodemon --prefix backend\""
   },

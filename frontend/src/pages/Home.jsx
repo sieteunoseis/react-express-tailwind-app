@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast"
 
-
 const Home = () => {
   const { toast } = useToast()
   const [connections, setConnections] = useState([]);

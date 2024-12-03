@@ -1,11 +1,7 @@
-// src/components/DataForm.jsx
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import validator from "validator";
-
-// const formSetup = import.meta.env.VITE_TABLE_COLUMNS.split(",");
 
 const DataForm = ({ onDataAdded }) => {
   const [data, setData] = useState([]);
