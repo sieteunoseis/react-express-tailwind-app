@@ -35,11 +35,41 @@ db.run(createTableQuery, (err) => {
 });
 
 app.get("/api/data", (req, res) => {
-  db.all("SELECT * FROM connections", [], (err, rows) => {
+  // Get the id from query parameters
+  const id = req.query.id;
+
+  if (id) {
+    // If an id is provided, select the specific record
+    db.get("SELECT * FROM connections WHERE id = ?", [id], (err, row) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (!row) {
+        return res.status(404).json({ error: "Record not found" });
+      }
+      res.json(row);
+    });
+  } else {
+    // If no id is provided, return all records
+    db.all("SELECT * FROM connections", [], (err, rows) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(rows);
+    });
+  }
+});
+
+app.get("/api/data/selected", (req, res) => {
+  // If an id is provided, select the specific record
+  db.get("SELECT * FROM connections WHERE selected = 'YES'", (err, row) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
-    res.json(rows);
+    if (!row) {
+      return res.status(404).json({ error: "Record not found" });
+    }
+    res.json(row);
   });
 });
 
