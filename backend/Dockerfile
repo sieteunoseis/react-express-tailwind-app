@@ -1,20 +1,31 @@
-# Dockerfile for Express Backend
-FROM node:latest
+# Use specific version and lighter base image
+FROM node:20-alpine
 
-# Create app directory
+# Add non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Create app directory and set ownership
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Create directories as root and set ownership immediately
+RUN mkdir -p /usr/src/app/db /usr/src/app/data && \
+    chown -R appuser:appgroup /usr/src/app && \
+    chmod 755 /usr/src/app/db /usr/src/app/data
 
-# Install app dependencies
-RUN npm install
+# Copy package files
+COPY --chown=appuser:appgroup package*.json ./
 
-# Copy the rest of the application code
-COPY . .
+# Install production dependencies only
+RUN npm ci --only=production
 
-# Expose the port the app runs on
-EXPOSE 5001
+# Copy application code with correct ownership
+COPY --chown=appuser:appgroup . .
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
+EXPOSE 5000
 
 # Command to run the application
 CMD [ "node", "server.js" ]

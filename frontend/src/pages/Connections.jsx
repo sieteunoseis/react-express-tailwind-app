@@ -6,7 +6,7 @@ function App() {
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
-    const response = await fetch(`http://localhost:${import.meta.env.VITE_BACKEND_PORT}/api/data`);
+    const response = await fetch(`/api/data`);
     const result = await response.json();
     setData(result);
   };

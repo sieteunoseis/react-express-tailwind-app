@@ -45,7 +45,7 @@ const DataForm = ({ onDataAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`http://localhost:${import.meta.env.VITE_BACKEND_PORT}/api/data`, {
+    const response = await fetch(`/api/data`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -4,13 +4,20 @@ services:
       context: ./frontend # Path to the front Dockerfile
     ports:
       - "3000:80" # Map port 3000 on host to port 80 in container
-    environment:
-      - VITE_BACKEND_PORT=5001
+    networks:
+      - app-network
 
   backend:
     build:
       context: ./backend # Path to the backend Dockerfile
-    ports:
-      - "5001:5001" # Map port 5001 on host to port 5001 in container
-    environment:
-      - TABLE_COLUMNS=name,hostname,username,password,version # Environment variable for the table columns. Update as needed for your project.
+    expose:
+      - "5000"
+    user: "${UID:-1000}:${GID:-1000}"  # Use host user's UID/GID
+    networks:
+      - app-network
+    env_file:
+      - .env
+
+networks:
+  app-network:
+    driver: bridge

@@ -7,11 +7,17 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = 5000;
+const TABLE_COLUMNS = process.env.VITE_TABLE_COLUMNS || "name, hostname, username, password, version";
 
 // Enable CORS
 app.use(cors());
 app.use(express.json());
+
+const dbDir = './db';
+if (!fs.existsSync(dbDir)){
+    fs.mkdirSync(dbDir, { recursive: true });
+}
 
 // Connect to SQLite database
 const db = new sqlite3.Database("./db/database.db", (err) => {
@@ -21,7 +27,7 @@ const db = new sqlite3.Database("./db/database.db", (err) => {
   console.log("Connected to the SQLite database.");
 });
 
-const tableColumns = process.env.TABLE_COLUMNS.split(',').map(col => col.trim());
+const tableColumns = TABLE_COLUMNS.split(',').map(col => col.trim());
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS connections (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -120,6 +126,6 @@ app.put('/api/data/select/:id', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
