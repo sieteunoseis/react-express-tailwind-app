@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { NavigationMenu, NavigationMenuList, NavigationMenuLink } from "@/components/ui/navigation-menu";
-import { useConfig } from '../config/ConfigContext';
+import { useConfig } from '@/config/ConfigContext';
 
 export default function Component() {
   const config = useConfig();

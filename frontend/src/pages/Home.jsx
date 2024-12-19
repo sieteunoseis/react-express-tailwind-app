@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import BackgroundLogo from "@/components/BackgroundLogo";
+// import { useConfig } from '@/config/ConfigContext';
 
 const Home = () => {
   const { toast } = useToast();
@@ -46,12 +48,19 @@ const Home = () => {
   }, [apiBaseUrl, navigate]);
 
   return (
-    <div className="min-h-screen p-10 bg-gray-100 dark:bg-black">
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl mb-2">React, Express and Tailwind App</h1>
-      <p className="leading-7 [&:not(:first-child)]:mt-6">
-        Boilerplate code for a full-stack application using React, Express and Tailwind CSS. This project is built with Vite, a modern build tool that is blazing fast and supports React, Vue, Svelte and vanilla JavaScript. The backend is a simple Express server that serves data to the frontend. The frontend is a React app that uses Tailwind CSS for styling. The project is set up with ESLint,
-        Prettier and Stylelint for code quality. The project also includes a dark mode toggle and a toast notification system.
-      </p>
+    <div className="min-h-full w-full py-20 relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-950">
+      <BackgroundLogo />
+      <div className="max-w-4xl mx-auto px-4">
+        <div className="flex flex-col items-center mb-10">
+          <div className="inline-block animate-fade-in">
+            <h1 className="text-4xl font-bold mb-1 text-left animate-slide-up">React Boilerplate</h1>
+            <h2 className="text-3xl font-bold mb-1 text-left animate-slide-up">Text to Speech Uploader</h2>
+            <p className="text-sm text-muted-foreground text-left animate-slide-up-delayed">Powered by Automate Builders</p>
+            <p className="mt-4 text-left">Boilerplate code for a full-stack application using React, Express and Tailwind CSS. This project is built with Vite, a modern build tool that is blazing fast and supports React, Vue, Svelte and vanilla JavaScript. The backend is a simple Express server that serves data to the frontend. The frontend is a React app that uses Tailwind CSS for styling. The project is set up with ESLint,
+            Prettier and Stylelint for code quality. The project also includes a dark mode toggle and a toast notification system.</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
