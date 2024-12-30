@@ -2,9 +2,11 @@
 
 ## How to use
 
-### 1. Clone this template
+### 1. Download script file and clone this template
 ```
-./scripts/git-template-remote.sh https://github.com/sieteunoseis/react-express-tailwind-app.git <your-project-name>
+wget -O git-template-remote.sh https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/refs/heads/main/scripts/git-template-remote.sh
+chmod +x git-template-remote.sh
+./git-template-remote.sh https://github.com/sieteunoseis/react-express-tailwind-app.git <your-project-name>
 ```
 ### 2. Install dependencies
 ```
