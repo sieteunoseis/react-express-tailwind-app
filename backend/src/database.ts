@@ -129,55 +129,76 @@ export class Database {
 
   getAllConnections(): Promise<ConnectionRecord[]> {
     return new Promise((resolve, reject) => {
-      this.db.all(
-        'SELECT id, name, hostname, username, version, selected, created_at, updated_at FROM connections',
-        [],
-        (err, rows) => {
-          if (err) {
-            Logger.error('Failed to fetch connections:', err);
-            reject(err);
-          } else {
-            Logger.debug(`Retrieved ${rows.length} connections`);
-            resolve(rows as ConnectionRecord[]);
-          }
+      // Get all columns except password_hash for security
+      const selectColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected', 'created_at', 'updated_at'];
+      const query = `SELECT ${selectColumns.join(', ')} FROM connections`;
+      
+      this.db.all(query, [], (err, rows) => {
+        if (err) {
+          Logger.error('Failed to fetch connections:', err);
+          reject(err);
+        } else {
+          Logger.debug(`Retrieved ${rows.length} connections`);
+          
+          // Add password placeholder for frontend display if password column exists in config
+          const processedRows = rows.map((row: any) => {
+            if (this.tableColumns.includes('password')) {
+              return { ...row, password: '********' };
+            }
+            return row;
+          });
+          
+          resolve(processedRows as ConnectionRecord[]);
         }
-      );
+      });
     });
   }
 
   getConnectionById(id: number): Promise<ConnectionRecord | null> {
     return new Promise((resolve, reject) => {
-      this.db.get(
-        'SELECT id, name, hostname, username, version, selected, created_at, updated_at FROM connections WHERE id = ?',
-        [id],
-        (err, row) => {
-          if (err) {
-            Logger.error('Failed to fetch connection by ID:', err);
-            reject(err);
-          } else {
-            Logger.debug(`Retrieved connection with ID: ${id}`);
-            resolve(row as ConnectionRecord || null);
+      // Get all columns except password_hash for security
+      const selectColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected', 'created_at', 'updated_at'];
+      const query = `SELECT ${selectColumns.join(', ')} FROM connections WHERE id = ?`;
+      
+      this.db.get(query, [id], (err, row) => {
+        if (err) {
+          Logger.error('Failed to fetch connection by ID:', err);
+          reject(err);
+        } else {
+          Logger.debug(`Retrieved connection with ID: ${id}`);
+          
+          // Add password placeholder for frontend display if password column exists in config
+          if (row && this.tableColumns.includes('password')) {
+            (row as any).password = '********';
           }
+          
+          resolve(row as ConnectionRecord || null);
         }
-      );
+      });
     });
   }
 
   getSelectedConnection(): Promise<ConnectionRecord | null> {
     return new Promise((resolve, reject) => {
-      this.db.get(
-        'SELECT id, name, hostname, username, version, selected, created_at, updated_at FROM connections WHERE selected = "YES"',
-        [],
-        (err, row) => {
-          if (err) {
-            Logger.error('Failed to fetch selected connection:', err);
-            reject(err);
-          } else {
-            Logger.debug('Retrieved selected connection');
-            resolve(row as ConnectionRecord || null);
+      // Get all columns except password_hash for security
+      const selectColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected', 'created_at', 'updated_at'];
+      const query = `SELECT ${selectColumns.join(', ')} FROM connections WHERE selected = "YES"`;
+      
+      this.db.get(query, [], (err, row) => {
+        if (err) {
+          Logger.error('Failed to fetch selected connection:', err);
+          reject(err);
+        } else {
+          Logger.debug('Retrieved selected connection');
+          
+          // Add password placeholder for frontend display if password column exists in config
+          if (row && this.tableColumns.includes('password')) {
+            (row as any).password = '********';
           }
+          
+          resolve(row as ConnectionRecord || null);
         }
-      );
+      });
     });
   }
 
