@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --env-file ../.env --exec ts-node src/server.ts",
+    "dev": "nodemon --exec \"node --env-file ../.env -r ts-node/register src/server.ts\"",
     "nodemon": "nodemon --exec ts-node src/server.ts",
     "type-check": "tsc --noEmit",
     "test": "jest",
