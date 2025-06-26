@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import validator from "validator";
 import { apiCall } from '../lib/api';
 
@@ -19,6 +20,7 @@ interface DataFormProps {
 }
 
 const DataForm: React.FC<DataFormProps> = ({ onDataAdded }) => {
+  const { toast } = useToast();
   const [data, setData] = useState<Column[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const object = data.reduce((obj: Record<string, string>, value) => {
@@ -70,10 +72,24 @@ const DataForm: React.FC<DataFormProps> = ({ onDataAdded }) => {
         method: "POST",
         body: JSON.stringify(formData),
       });
+      
+      toast({
+        title: "Success!",
+        description: "Connection added successfully.",
+        duration: 3000,
+      });
+      
       onDataAdded(); // Notify the table to refresh
       setFormData(object);
     } catch (error) {
       console.error("Error inserting data:", error);
+      
+      toast({
+        title: "Error",
+        description: "Failed to add connection. Please try again.",
+        variant: "destructive",
+        duration: 5000,
+      });
     }
   };
 

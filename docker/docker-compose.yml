@@ -27,8 +27,6 @@ services:
     container_name: react-backend
     expose:
       - "${PORT:-3000}"
-    ports:
-      - "${PORT:-3000}:${PORT:-3000}"
     networks:
       - app-network
     environment:
