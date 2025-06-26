@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import BackgroundLogo from "@/components/BackgroundLogo";
+import { apiCall } from "@/lib/api";
 // import { useConfig } from '@/config/ConfigContext';
 
 const Home = () => {
@@ -15,13 +16,11 @@ const Home = () => {
     isLoading: true,
   });
 
-  const apiBaseUrl = `/api/data`;
-
   // Fetch initial connections
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const response = await fetch(apiBaseUrl);
+        const response = await apiCall('/data');
         const data = await response.json();
         setConnectionState((prev) => ({
           ...prev,
@@ -45,7 +44,7 @@ const Home = () => {
     };
 
     fetchResults();
-  }, [apiBaseUrl, navigate]);
+  }, [navigate]);
 
   return (
     <div className="min-h-full w-full py-20 relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-950">

@@ -33,13 +33,13 @@ fi
 
 print_status "Docker is running"
 
-# Check if docker-compose is available
-if ! command -v docker-compose &> /dev/null; then
-    print_error "docker-compose is not installed"
+# Check if docker compose is available
+if ! command -v docker &> /dev/null || ! docker compose version &> /dev/null; then
+    print_error "Docker Compose is not available. Please install Docker with Compose V2 support."
     exit 1
 fi
 
-print_status "docker-compose is available"
+print_status "Docker Compose is available"
 
 # Choose compose file
 COMPOSE_FILE="docker-compose.yml"
@@ -52,20 +52,20 @@ fi
 
 # Stop any existing containers
 print_status "Stopping existing containers..."
-docker-compose -f $COMPOSE_FILE down > /dev/null 2>&1 || true
+docker compose -f $COMPOSE_FILE down > /dev/null 2>&1 || true
 
 # Start services
 print_status "Starting services..."
-docker-compose -f $COMPOSE_FILE up -d
+docker compose -f $COMPOSE_FILE up -d
 
 # Wait for services to be ready
 print_status "Waiting for services to start..."
 sleep 10
 
 # Check if containers are running
-if ! docker-compose -f $COMPOSE_FILE ps | grep -q "Up"; then
+if ! docker compose -f $COMPOSE_FILE ps | grep -q "Up"; then
     print_error "Containers failed to start"
-    docker-compose -f $COMPOSE_FILE logs
+    docker compose -f $COMPOSE_FILE logs
     exit 1
 fi
 
@@ -87,7 +87,7 @@ else
     else
         print_error "Backend is not responding"
         echo "Backend logs:"
-        docker-compose -f $COMPOSE_FILE logs backend
+        docker compose -f $COMPOSE_FILE logs backend
         exit 1
     fi
 fi
@@ -99,7 +99,7 @@ if curl -f "http://localhost:3000" > /dev/null 2>&1; then
 else
     print_error "Frontend is not accessible"
     echo "Frontend logs:"
-    docker-compose -f $COMPOSE_FILE logs frontend
+    docker compose -f $COMPOSE_FILE logs frontend
     exit 1
 fi
 
@@ -120,5 +120,5 @@ echo "  Frontend: http://localhost:3000"
 echo "  Backend:  http://localhost:$PORT"
 echo "  API:      http://localhost:$PORT/api"
 echo ""
-echo "To stop services: docker-compose -f $COMPOSE_FILE down"
-echo "To view logs:     docker-compose -f $COMPOSE_FILE logs -f"
+echo "To stop services: docker compose -f $COMPOSE_FILE down"
+echo "To view logs:     docker compose -f $COMPOSE_FILE logs -f"

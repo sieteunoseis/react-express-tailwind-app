@@ -9,7 +9,7 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await apiCall(`/api/data`);
+      const response = await apiCall(`/data`);
       const result = await response.json();
       setData(result);
     } catch (error) {

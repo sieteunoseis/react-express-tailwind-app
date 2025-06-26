@@ -96,7 +96,7 @@ jobs:
         export BACKEND_TAG=${{ github.sha }}
         
         # Start services
-        docker-compose up -d
+        docker compose up -d
         
         # Wait for services
         sleep 30
@@ -111,4 +111,4 @@ jobs:
         curl -f http://localhost:${BACKEND_PORT}/api/data || exit 1
         
         # Cleanup
-        docker-compose down
+        docker compose down

@@ -14,9 +14,9 @@ services:
     networks:
       - app-network
     environment:
-      - PORT=${PORT:-3000}
+      - PORT=${PORT:-3001}
       - BACKEND_HOST=${BACKEND_HOST:-backend}
-      - VITE_API_URL=http://backend:${PORT:-3000}
+      - VITE_API_URL=/api
       - VITE_BRANDING_NAME=${VITE_BRANDING_NAME:-Automate Builders}
       - VITE_BRANDING_URL=${VITE_BRANDING_URL:-https://automate.builders}
       - VITE_TABLE_COLUMNS=${VITE_TABLE_COLUMNS:-name,hostname,username,password,version}
@@ -29,13 +29,13 @@ services:
       dockerfile: Dockerfile
     container_name: react-backend
     expose:
-      - "${PORT:-3000}"
+      - "${PORT:-3001}"
     ports:
-      - "${PORT:-3000}:${PORT:-3000}"
+      - "${PORT:-3001}:${PORT:-3001}"
     networks:
       - app-network
     environment:
-      - PORT=${PORT:-3000}
+      - PORT=${PORT:-3001}
       - NODE_ENV=${NODE_ENV:-production}
       - VITE_TABLE_COLUMNS=${VITE_TABLE_COLUMNS:-name,hostname,username,password,version}
     volumes:

@@ -16,13 +16,13 @@ wget -r --no-parent --reject="index.html*" https://raw.githubusercontent.com/sie
 ### Run Application
 ```bash
 # Start the application
-docker-compose up -d
+docker compose up -d
 
 # Check logs
-docker-compose logs -f
+docker compose logs -f
 
 # Stop the application
-docker-compose down
+docker compose down
 ```
 
 ## Configuration
@@ -61,8 +61,8 @@ services:
 Database data is persisted in a Docker volume `backend_data`. To reset:
 
 ```bash
-docker-compose down -v  # Remove volumes
-docker-compose up -d    # Start fresh
+docker compose down -v  # Remove volumes
+docker compose up -d    # Start fresh
 ```
 
 ## Troubleshooting
@@ -79,7 +79,7 @@ cd react-express-tailwind-app
 cp .env.example .env
 
 # Build and run locally using root docker-compose.yaml
-docker-compose -f docker-compose.yaml up -d --build
+docker compose -f docker-compose.yaml up -d --build
 ```
 
 Or download just the build compose file:
@@ -88,7 +88,7 @@ Or download just the build compose file:
 wget https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/main/docker-compose.yaml
 
 # Build and run
-docker-compose -f docker-compose.yaml up -d --build
+docker compose -f docker-compose.yaml up -d --build
 ```
 
 ### Image Pull Issues
@@ -96,7 +96,7 @@ If images aren't available in GitHub Container Registry yet:
 ```bash
 # Build images locally first
 cd ..
-docker-compose build
+docker compose build
 docker tag react-express-tailwind-app_frontend ghcr.io/sieteunoseis/react-express-tailwind-app/frontend:latest
 docker tag react-express-tailwind-app_backend ghcr.io/sieteunoseis/react-express-tailwind-app/backend:latest
 ```
@@ -107,17 +107,17 @@ docker tag react-express-tailwind-app_backend ghcr.io/sieteunoseis/react-express
 curl http://localhost:3000/health
 
 # Check backend logs
-docker-compose logs backend
+docker compose logs backend
 ```
 
 ### Container Communication Issues
 ```bash
 # Test internal network connectivity
-docker-compose exec react-frontend ping react-backend
-docker-compose exec react-frontend curl http://backend:3000/health
+docker compose exec react-frontend ping react-backend
+docker compose exec react-frontend curl http://backend:3000/health
 
 # If using different container names, override the backend host
-BACKEND_HOST=react-backend docker-compose up -d
+BACKEND_HOST=react-backend docker compose up -d
 ```
 
 ## Development vs Testing
@@ -125,7 +125,7 @@ BACKEND_HOST=react-backend docker-compose up -d
 | Environment | Frontend | Backend | Use Case |
 |-------------|----------|---------|-----------|
 | **Development** | `npm run dev` | `npm run dev` | Local development with hot reload |
-| **Local Docker** | `docker-compose up` | `docker-compose up` | Test production build locally |
+| **Local Docker** | `docker compose up` | `docker compose up` | Test production build locally |
 | **Testing** | Pre-built images | Pre-built images | Test deployed versions |
 
 ## Monitoring

@@ -15,6 +15,7 @@
   - Fixed Docker image tags to use dynamic `FRONTEND_TAG` and `BACKEND_TAG` variables
   - Resolved port conflict between frontend (3000) and backend (3001)
   - Updated health check and API test endpoints in workflow
+  - **Updated to modern Docker Compose V2 syntax** (`docker compose` instead of `docker-compose`)
 
 ## 🔧 Open Issues
 

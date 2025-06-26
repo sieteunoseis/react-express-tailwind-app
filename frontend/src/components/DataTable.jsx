@@ -19,7 +19,7 @@ const DataTable = ({ data, onDataChange }) => {
 
   const handleDelete = async (id) => {
     try {
-      await apiCall(`/api/data/${id}`, { method: "DELETE" });
+      await apiCall(`/data/${id}`, { method: "DELETE" });
       onDataChange();
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -28,7 +28,7 @@ const DataTable = ({ data, onDataChange }) => {
 
   const selectRecord = async (id) => {
     try {
-      await apiCall(`/api/data/select/${id}`, { method: "PUT" });
+      await apiCall(`/data/select/${id}`, { method: "PUT" });
       onDataChange();
     } catch (error) {
       console.error("Error updating data:", error);
