@@ -11,7 +11,7 @@
 - [x] **Docker API Routing**: Fixed duplicate `/api` prefix by correcting `VITE_API_URL` configuration
 - [x] **Form Feedback**: Added toast notifications to DataForm for success/error messages
 - [x] **GitHub Actions Docker Test**: Fixed missing `.env` file and port conflicts in workflow
-  - Added fallback to copy `.env` from root directory if not found in `/docker`
+  - Fixed fallback logic for missing `.env` file (copy from `.env.example` or create minimal version)
   - Fixed Docker image tags to use dynamic `FRONTEND_TAG` and `BACKEND_TAG` variables
   - Resolved port conflict between frontend (3000) and backend (3001)
   - Updated health check and API test endpoints in workflow
