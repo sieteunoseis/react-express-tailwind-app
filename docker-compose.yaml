@@ -11,7 +11,9 @@ services:
     build:
       context: ./backend # Path to the backend Dockerfile
     expose:
-      - "5000"
+      - "${PORT:-5000}"
+    ports:
+      - "${PORT:-5000}:${PORT:-5000}"  # Expose backend port for development
     user: "${UID:-1000}:${GID:-1000}"  # Use host user's UID/GID
     networks:
       - app-network

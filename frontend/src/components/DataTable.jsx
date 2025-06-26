@@ -95,7 +95,7 @@ const DataTable = ({ data, onDataChange }) => {
                 })}
                 <td className={`border-b p-2`}>
                   {record.selected === "YES" ? (
-                    <Button className="mr-2 bg-red-800 hover:bg-red-500">Selected</Button>
+                    <Button className="mr-2 bg-green-600 hover:bg-green-500">Selected</Button>
                   ) : (
                     <Button onClick={() => selectRecord(record.id)} className="mr-2">
                       Select

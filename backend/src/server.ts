@@ -9,7 +9,7 @@ import { ConnectionRecord, ApiResponse } from './types';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 const TABLE_COLUMNS = (process.env.VITE_TABLE_COLUMNS || 'name,hostname,username,password,version')
   .split(',')
   .map(col => col.trim())

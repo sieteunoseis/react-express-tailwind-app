@@ -53,13 +53,31 @@ This configuration:
 - Auto-generates database schema
 
 #### Environment Variables
-Set corresponding environment variables for the backend server in `.env` or `docker-compose.yaml`:
+Copy `.env.example` to `.env` and configure your application:
 
 ```bash
-VITE_TABLE_COLUMNS=name,hostname,username,password,version
+cp .env.example .env
+```
+
+Key configuration options:
+
+```bash
+# Backend Configuration
+PORT=5000                    # Backend server port (default: 5000)
+NODE_ENV=development         # Environment mode
+
+# Application Branding
 VITE_BRANDING_NAME="Your Company Name"
 VITE_BRANDING_URL="https://yourcompany.com"
+
+# Database Schema
+VITE_TABLE_COLUMNS=name,hostname,username,password,version
 ```
+
+**Port Configuration**: 
+- Backend runs on the port specified by `PORT` environment variable
+- Frontend automatically proxies API calls to the configured backend port
+- Docker exposes the backend port for external access
 
 ### 4. Run the app
 ```bash
@@ -160,10 +178,32 @@ npm run build
 
 ### Port conflicts (EADDRINUSE)
 ```bash
-# Kill processes using ports 3000 or 5173
-lsof -ti:3000 | xargs kill -9
-lsof -ti:5173 | xargs kill -9
+# Check what's using your backend port
+lsof -i :5000
+
+# Kill processes using common ports
+lsof -ti:3000 | xargs kill -9   # Frontend (production)
+lsof -ti:5173 | xargs kill -9   # Frontend (dev)
+lsof -ti:5000 | xargs kill -9   # Backend (default)
+
+# Or change the backend port in .env
+echo "PORT=8000" >> .env        # Use port 8000 instead
 ```
+
+### Changing the backend port
+To use a different backend port:
+
+1. **Update `.env` file**:
+   ```bash
+   PORT=8000  # Your preferred port
+   ```
+
+2. **Restart the application**:
+   ```bash
+   npm run dev
+   ```
+
+The frontend will automatically proxy to the new port via Vite configuration.
 
 ---
 
