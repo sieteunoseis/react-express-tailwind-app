@@ -102,9 +102,10 @@ jobs:
         # Wait for services
         sleep 30
         
-        # Get the backend port from .env
-        BACKEND_PORT=$(grep "^PORT=" .env 2>/dev/null | cut -d'=' -f2 || echo "3001")
+        # Get the backend port from .env and clean it up
+        BACKEND_PORT=$(grep "^PORT=" .env 2>/dev/null | cut -d'=' -f2 | tr -d '\r\n[:space:]' || echo "3001")
         echo "Backend port: $BACKEND_PORT"
+        echo "Port length: ${#BACKEND_PORT}"
         
         # Test backend health endpoint directly
         curl -f "http://localhost:${BACKEND_PORT}/health" || exit 1
