@@ -30,15 +30,32 @@ export class Database {
   }
 
   private initializeSchema(): void {
+    // First, check if table exists and get its schema
+    this.db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='connections'", (err, row) => {
+      if (err) {
+        Logger.error('Failed to check table existence:', err);
+        throw err;
+      }
+
+      if (!row) {
+        // Table doesn't exist, create it
+        this.createTable();
+      } else {
+        // Table exists, check and migrate schema if needed
+        this.migrateSchema();
+      }
+    });
+  }
+
+  private createTable(): void {
     const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS connections (
+      CREATE TABLE connections (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${this.tableColumns.join(' TEXT, ')} TEXT,
+        ${this.tableColumns.map(col => `${col} TEXT`).join(', ')},
         password_hash TEXT,
         selected TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(selected)
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `;
 
@@ -47,7 +64,57 @@ export class Database {
         Logger.error('Failed to create table:', err);
         throw err;
       }
-      Logger.info('Database schema initialized');
+      Logger.info('Database table created with schema:', this.tableColumns);
+    });
+  }
+
+  private migrateSchema(): void {
+    // Get current table schema
+    this.db.all("PRAGMA table_info(connections)", (err, columns: any[]) => {
+      if (err) {
+        Logger.error('Failed to get table info:', err);
+        throw err;
+      }
+
+      const existingColumns = columns.map(col => col.name);
+      const requiredColumns = ['id', ...this.tableColumns, 'password_hash', 'selected', 'created_at', 'updated_at'];
+      
+      // Check for missing columns
+      const missingColumns = requiredColumns.filter(col => !existingColumns.includes(col));
+      
+      if (missingColumns.length > 0) {
+        Logger.info('Missing columns detected, adding:', missingColumns);
+        this.addMissingColumns(missingColumns);
+      } else {
+        Logger.info('Database schema is up to date');
+      }
+    });
+  }
+
+  private addMissingColumns(missingColumns: string[]): void {
+    let completed = 0;
+    const total = missingColumns.length;
+
+    missingColumns.forEach(column => {
+      let columnDef = 'TEXT';
+      if (column === 'created_at' || column === 'updated_at') {
+        columnDef = 'DATETIME DEFAULT CURRENT_TIMESTAMP';
+      }
+
+      const alterQuery = `ALTER TABLE connections ADD COLUMN ${column} ${columnDef}`;
+      
+      this.db.run(alterQuery, (err) => {
+        if (err) {
+          Logger.error(`Failed to add column ${column}:`, err);
+        } else {
+          Logger.info(`Added column: ${column}`);
+        }
+        
+        completed++;
+        if (completed === total) {
+          Logger.info('Schema migration completed');
+        }
+      });
     });
   }
 
@@ -129,14 +196,18 @@ export class Database {
         const isFirstEntry = row.count === 0;
         const selectedValue = isFirstEntry ? 'YES' : null;
 
+        // Get column values excluding password (we store password_hash separately)
+        const dataColumns = this.tableColumns.filter(col => col !== 'password');
+        const columnValues = dataColumns.map(col => (data as any)[col] || null);
+
         const insertQuery = `
-          INSERT INTO connections (${this.tableColumns.join(', ')}, password_hash, selected) 
-          VALUES (?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO connections (${dataColumns.join(', ')}, password_hash, selected) 
+          VALUES (${dataColumns.map(() => '?').join(', ')}, ?, ?)
         `;
 
         this.db.run(
           insertQuery,
-          [data.name, data.hostname, data.username, data.version, hashedPassword, selectedValue],
+          [...columnValues, hashedPassword, selectedValue],
           function (err) {
             if (err) {
               Logger.error('Failed to create connection:', err);
