@@ -2,14 +2,19 @@ import React, { useEffect, useState } from "react";
 import DataForm from "@/components/DataForm";
 import DataTable from "@/components/DataTable";
 import BackgroundLogo from "@/components/BackgroundLogo";
+import { apiCall } from '../lib/api';
 
 function App() {
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
-    const response = await fetch(`/api/data`);
-    const result = await response.json();
-    setData(result);
+    try {
+      const response = await apiCall(`/api/data`);
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   useEffect(() => {

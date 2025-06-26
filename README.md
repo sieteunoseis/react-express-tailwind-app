@@ -75,19 +75,30 @@ VITE_TABLE_COLUMNS=name,hostname,username,password,version
 ```
 
 **Port Configuration**: 
-- Backend runs on the port specified by `PORT` environment variable
-- Frontend automatically proxies API calls to the configured backend port
-- Docker exposes the backend port for external access
+- **Development**: Frontend proxies API calls to `localhost:${PORT}` 
+- **Docker**: Frontend uses service name `http://backend:${PORT}` for container-to-container communication
+- **Production**: Configurable via `VITE_API_URL` environment variable
 
 ### 4. Run the app
 ```bash
 npm run dev  # Starts both frontend and backend in development mode
 ```
 
-### 5. Build the app
+### 5. Build and run with Docker
 
 ```bash
-npm run build           # Build for production (Docker)
+# Build and run with Docker Compose
+npm run build
+
+# Or run individual commands
+docker-compose up --build   # Build and start containers
+docker-compose up           # Start existing containers  
+docker-compose down         # Stop containers
+```
+
+### 6. Build for production (manual)
+
+```bash
 cd frontend && npm run build  # Frontend build only
 cd backend && npm run build   # Backend TypeScript compilation
 ```

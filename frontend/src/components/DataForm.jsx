@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import validator from "validator";
+import { apiCall } from '../lib/api';
 
 const DataForm = ({ onDataAdded }) => {
   const [data, setData] = useState([]);
@@ -49,19 +50,15 @@ const DataForm = ({ onDataAdded }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`/api/data`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (response.ok) {
+    try {
+      await apiCall(`/api/data`, {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
       onDataAdded(); // Notify the table to refresh
       setFormData(object);
-    } else {
-      console.error("Error inserting data.");
+    } catch (error) {
+      console.error("Error inserting data:", error);
     }
   };
 

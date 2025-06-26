@@ -20,10 +20,15 @@ export default defineConfig(({ mode }) => {
       server: {
         proxy: {
           '/api': {
-            target: `http://localhost:${env.PORT || 5000}`,
+            // In development, proxy to localhost. In Docker, this won't be used.
+            target: `http://localhost:${env.PORT || 3000}`,
             changeOrigin: true
           }
         }
+      },
+      define: {
+        // Make API URL available at build time for production
+        __API_URL__: JSON.stringify(env.VITE_API_URL || `http://localhost:${env.PORT || 3000}`)
       },
       test: {
         globals: true,

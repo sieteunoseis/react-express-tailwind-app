@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useConfig } from '../config/ConfigContext';
+import { apiCall } from '../lib/api';
 
 const DataTable = ({ data, onDataChange }) => {
   const config = useConfig();
@@ -17,24 +18,20 @@ const DataTable = ({ data, onDataChange }) => {
   }, []);
 
   const handleDelete = async (id) => {
-    const response = await fetch(`/api/data/${id}`, {
-      method: "DELETE",
-    });
-    if (response.ok) {
+    try {
+      await apiCall(`/api/data/${id}`, { method: "DELETE" });
       onDataChange();
-    } else {
-      console.error("Error deleting data.");
+    } catch (error) {
+      console.error("Error deleting data:", error);
     }
   };
 
   const selectRecord = async (id) => {
-    const response = await fetch(`/api/data/select/${id}`, {
-      method: "PUT",
-    });
-    if (response.ok) {
+    try {
+      await apiCall(`/api/data/select/${id}`, { method: "PUT" });
       onDataChange();
-    } else {
-      console.error("Error updating data.");
+    } catch (error) {
+      console.error("Error updating data:", error);
     }
   };
 
