@@ -38,6 +38,7 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "@types/validator": "^13.15.2",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.20",

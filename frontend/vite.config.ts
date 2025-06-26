@@ -5,13 +5,23 @@ import { defineConfig, loadEnv } from "vite"
 
 export default defineConfig(({ mode }) => {
 
-    // Load env file from parent directory
-    const env = loadEnv(mode, path.join(process.cwd(), '..'), '')
+    // Try to load env file from parent directory, fallback to current directory
+    let envDir = '..'
+    let env: Record<string, string> = {}
+    
+    try {
+      env = loadEnv(mode, path.join(process.cwd(), '..'), '')
+    } catch (error) {
+      // Fallback to current directory for Docker builds
+      envDir = '.'
+      env = loadEnv(mode, process.cwd(), '')
+    }
+    
     console.log('Loaded environment:', Object.keys(env)) // Using env to avoid the error
 
     return {
       plugins: [react()],
-      envDir: '..',
+      envDir,
       resolve: {
         alias: {
           "@": path.resolve(__dirname, "./src"),
@@ -28,7 +38,7 @@ export default defineConfig(({ mode }) => {
       },
       define: {
         // Make API URL available at build time for production
-        __API_URL__: JSON.stringify(env.VITE_API_URL || `http://localhost:${env.PORT || 3000}`)
+        __API_URL__: JSON.stringify(env.VITE_API_URL || '/api')
       },
       test: {
         globals: true,

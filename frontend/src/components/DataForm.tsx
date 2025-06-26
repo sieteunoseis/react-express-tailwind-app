@@ -4,32 +4,47 @@ import { Button } from "@/components/ui/button";
 import validator from "validator";
 import { apiCall } from '../lib/api';
 
-const DataForm = ({ onDataAdded }) => {
-  const [data, setData] = useState([]);
-  const [errors, setErrors] = useState({});
-  const object = data.reduce((obj, value) => {
+interface Column {
+  name: string;
+  type: string;
+  optional?: boolean;
+  validator: {
+    name: keyof typeof validator;
+    options?: any;
+  };
+}
+
+interface DataFormProps {
+  onDataAdded: () => void;
+}
+
+const DataForm: React.FC<DataFormProps> = ({ onDataAdded }) => {
+  const [data, setData] = useState<Column[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const object = data.reduce((obj: Record<string, string>, value) => {
     obj[value.name] = "";
     return obj;
   }, {});
-  const [formData, setFormData] = useState(object);
+  const [formData, setFormData] = useState<Record<string, string>>(object);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/dbSetup.json"); // Note the leading '/'
-      const jsonData = await response.json();
+      const jsonData: Column[] = await response.json();
       setData(jsonData);
     };
 
     fetchData();
   }, []);
 
-  const handleChange = (e, options, isOptional = false) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, options: Column['validator'], isOptional = false) => {
     const { name, value } = e.target;
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     // Validate - skip validation if field is optional and empty
     if (value.trim() !== '' || !isOptional) {
-      if (!validator[options.name](value, options.options)) {
+      const validatorFn = validator[options.name] as any;
+      if (!validatorFn(value, options.options)) {
         newErrors[name] = "Invalid value";
       } else {
         newErrors[name] = "";
@@ -48,7 +63,7 @@ const DataForm = ({ onDataAdded }) => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await apiCall(`/api/data`, {
@@ -62,7 +77,7 @@ const DataForm = ({ onDataAdded }) => {
     }
   };
 
-  const formatColumnName = (col) => {
+  const formatColumnName = (col: string): string => {
     return col
       .replace(/[^a-zA-Z]+/g, " ") // Replace non-letter characters with spaces
       .toUpperCase();
@@ -71,8 +86,8 @@ const DataForm = ({ onDataAdded }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {data.map((col) => {
-        var formValue = formData[col.name];
-        var type = "text";
+        const formValue = formData[col.name];
+        let type = "text";
         if (col.name === "password" || col.name === "pw") {
           type = "password";
         }
@@ -87,14 +102,14 @@ const DataForm = ({ onDataAdded }) => {
             <Input
               required={!isOptional}
               type={type}
-              key={col.name}
               name={col.name}
               placeholder={placeholder}
               value={formValue || ""}
               onChange={(e) => {
                 handleChange(e, col.validator, isOptional);
               }}
-            />{errors[col.name] && <span className="text-red-500 font-semibold">{errors[col.name]}</span>}
+            />
+            {errors[col.name] && <span className="text-red-500 font-semibold">{errors[col.name]}</span>}
           </div>
         );
       })}

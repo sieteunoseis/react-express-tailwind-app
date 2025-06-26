@@ -7,9 +7,10 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-# Create a temporary .env file for the build process
-RUN echo "PORT=3000" > ../.env
-RUN echo "VITE_API_URL=/api" >> ../.env
+# Set environment variables for the build process
+ENV PORT=3000
+ENV VITE_API_URL=/api
+ENV NODE_ENV=production
 
 RUN npm run build
 

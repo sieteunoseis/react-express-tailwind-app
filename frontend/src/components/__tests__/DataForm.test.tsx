@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DataForm from '../DataForm';
 
@@ -28,42 +28,39 @@ vi.mock('../../hooks/use-toast', () => ({
   })
 }));
 
-const mockOnSubmit = vi.fn();
+const mockOnDataAdded = vi.fn();
 
 describe('DataForm', () => {
   it('renders form fields based on config', () => {
-    render(<DataForm onSubmit={mockOnSubmit} />);
+    render(<DataForm onDataAdded={mockOnDataAdded} />);
     
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/hostname/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/name/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/hostname/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /add connection/i })).toBeInTheDocument();
   });
 
   it('validates required fields', async () => {
     const user = userEvent.setup();
-    render(<DataForm onSubmit={mockOnSubmit} />);
+    render(<DataForm onDataAdded={mockOnDataAdded} />);
     
-    const submitButton = screen.getByRole('button', { name: /submit/i });
+    const submitButton = screen.getByRole('button', { name: /add connection/i });
     await user.click(submitButton);
     
-    expect(mockOnSubmit).not.toHaveBeenCalled();
+    expect(mockOnDataAdded).not.toHaveBeenCalled();
   });
 
-  it('submits form with valid data', async () => {
+  it('submets form with valid data', async () => {
     const user = userEvent.setup();
-    render(<DataForm onSubmit={mockOnSubmit} />);
+    render(<DataForm onDataAdded={mockOnDataAdded} />);
     
-    await user.type(screen.getByLabelText(/name/i), 'TestConnection');
-    await user.type(screen.getByLabelText(/hostname/i), 'example.com');
+    await user.type(screen.getByPlaceholderText(/name/i), 'TestConnection');
+    await user.type(screen.getByPlaceholderText(/hostname/i), 'example.com');
     
-    const submitButton = screen.getByRole('button', { name: /submit/i });
+    const submitButton = screen.getByRole('button', { name: /add connection/i });
     await user.click(submitButton);
     
     await waitFor(() => {
-      expect(mockOnSubmit).toHaveBeenCalledWith({
-        name: 'TestConnection',
-        hostname: 'example.com'
-      });
+      expect(mockOnDataAdded).toHaveBeenCalled();
     });
   });
 });
