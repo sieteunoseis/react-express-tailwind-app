@@ -14,12 +14,19 @@ RUN mkdir -p /usr/src/app/db /usr/src/app/data && \
 
 # Copy package files
 COPY --chown=appuser:appgroup package*.json ./
+COPY --chown=appuser:appgroup tsconfig.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install all dependencies (including devDependencies for TypeScript build)
+RUN npm ci
 
-# Copy application code with correct ownership
-COPY --chown=appuser:appgroup . .
+# Copy source code with correct ownership
+COPY --chown=appuser:appgroup src/ ./src/
+
+# Build TypeScript
+RUN npm run build
+
+# Remove devDependencies and source files to keep image lean
+RUN npm prune --production && rm -rf src/ tsconfig.json
 
 # Switch to non-root user
 USER appuser
@@ -28,4 +35,4 @@ USER appuser
 EXPOSE 5000
 
 # Command to run the application
-CMD [ "node", "server.js" ]
+CMD [ "node", "dist/server.js" ]
