@@ -98,7 +98,7 @@ export class Database {
     missingColumns.forEach(column => {
       let columnDef = 'TEXT';
       if (column === 'created_at' || column === 'updated_at') {
-        columnDef = 'DATETIME DEFAULT CURRENT_TIMESTAMP';
+        columnDef = 'DATETIME';
       }
 
       const alterQuery = `ALTER TABLE connections ADD COLUMN ${column} ${columnDef}`;
@@ -130,8 +130,8 @@ export class Database {
   getAllConnections(): Promise<ConnectionRecord[]> {
     return new Promise((resolve, reject) => {
       // Get all columns except password_hash for security
-      const selectColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected', 'created_at', 'updated_at'];
-      const query = `SELECT ${selectColumns.join(', ')} FROM connections`;
+      const baseColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected'];
+      const query = `SELECT ${baseColumns.join(', ')} FROM connections`;
       
       this.db.all(query, [], (err, rows) => {
         if (err) {
@@ -157,8 +157,8 @@ export class Database {
   getConnectionById(id: number): Promise<ConnectionRecord | null> {
     return new Promise((resolve, reject) => {
       // Get all columns except password_hash for security
-      const selectColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected', 'created_at', 'updated_at'];
-      const query = `SELECT ${selectColumns.join(', ')} FROM connections WHERE id = ?`;
+      const baseColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected'];
+      const query = `SELECT ${baseColumns.join(', ')} FROM connections WHERE id = ?`;
       
       this.db.get(query, [id], (err, row) => {
         if (err) {
@@ -181,8 +181,8 @@ export class Database {
   getSelectedConnection(): Promise<ConnectionRecord | null> {
     return new Promise((resolve, reject) => {
       // Get all columns except password_hash for security
-      const selectColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected', 'created_at', 'updated_at'];
-      const query = `SELECT ${selectColumns.join(', ')} FROM connections WHERE selected = "YES"`;
+      const baseColumns = ['id', ...this.tableColumns.filter(col => col !== 'password'), 'selected'];
+      const query = `SELECT ${baseColumns.join(', ')} FROM connections WHERE selected = "YES"`;
       
       this.db.get(query, [], (err, row) => {
         if (err) {
