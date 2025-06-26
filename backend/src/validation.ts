@@ -28,10 +28,13 @@ export const validateConnectionData = (data: any): { isValid: boolean; errors: s
     errors.push('Password must contain only ASCII characters');
   }
 
-  if (!data.version || typeof data.version !== 'string') {
-    errors.push('Version is required and must be a string');
-  } else if (!validator.isDecimal(data.version, { force_decimal: true, decimal_digits: '1,1', locale: 'en-US' })) {
-    errors.push('Version must be a valid decimal number');
+  // Version is optional
+  if (data.version !== undefined && data.version !== null && data.version !== '') {
+    if (typeof data.version !== 'string') {
+      errors.push('Version must be a string');
+    } else if (!validator.isDecimal(data.version, { force_decimal: false, decimal_digits: '1,2', locale: 'en-US' })) {
+      errors.push('Version must be a valid decimal number (e.g., 1.0, 2.5, 10.15)');
+    }
   }
 
   return {

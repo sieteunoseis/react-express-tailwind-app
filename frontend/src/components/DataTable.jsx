@@ -72,13 +72,24 @@ const DataTable = ({ data, onDataChange }) => {
                   const columnName = col.name.trim();
                   const cellValue = record[columnName] || "";
 
+                  const renderCellValue = () => {
+                    if (columnName === "password" || columnName === "pw") {
+                      return <span>********</span>;
+                    }
+                    
+                    if (columnName === "version") {
+                      if (!cellValue || cellValue.trim() === "") {
+                        return <span className="text-gray-400 italic">N/A</span>;
+                      }
+                      return cellValue;
+                    }
+                    
+                    return cellValue;
+                  };
+
                   return (
                     <td className="border-r border-b p-2" key={columnName}>
-                      {columnName === "password" || columnName === "pw" ? (
-                        <span>********</span>
-                      ) : (
-                        cellValue
-                      )}
+                      {renderCellValue()}
                     </td>
                   );
                 })}

@@ -22,14 +22,18 @@ const DataForm = ({ onDataAdded }) => {
     fetchData();
   }, []);
 
-  const handleChange = (e, options) => {
+  const handleChange = (e, options, isOptional = false) => {
     const { name, value } = e.target;
     const newErrors = {};
 
-    // Validate
-    if (!validator[options.name](value, options.options)) {
-      newErrors[name] = "Invalid value";
-    }else{
+    // Validate - skip validation if field is optional and empty
+    if (value.trim() !== '' || !isOptional) {
+      if (!validator[options.name](value, options.options)) {
+        newErrors[name] = "Invalid value";
+      } else {
+        newErrors[name] = "";
+      }
+    } else {
       newErrors[name] = "";
     }
 
@@ -75,17 +79,23 @@ const DataForm = ({ onDataAdded }) => {
         if (col.name === "password" || col.name === "pw") {
           type = "password";
         }
+        
+        const isOptional = col.optional === true;
+        const placeholder = isOptional 
+          ? `${formatColumnName(col.name)} (Optional)`
+          : formatColumnName(col.name);
+          
         return (
           <div key={col.name}>
             <Input
-              required
+              required={!isOptional}
               type={type}
               key={col.name}
               name={col.name}
-              placeholder={formatColumnName(col.name)}
+              placeholder={placeholder}
               value={formValue || ""}
               onChange={(e) => {
-                handleChange(e, col.validator);
+                handleChange(e, col.validator, isOptional);
               }}
             />{errors[col.name] && <span className="text-red-500 font-semibold">{errors[col.name]}</span>}
           </div>
