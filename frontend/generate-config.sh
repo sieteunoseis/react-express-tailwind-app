@@ -9,7 +9,8 @@ window.APP_CONFIG = {
 };
 EOF
 
-# Update nginx configuration with the correct backend port
+# Update nginx configuration with the correct backend host and port
+sed -i "s/\${BACKEND_HOST}/${BACKEND_HOST:-backend}/g" /etc/nginx/conf.d/default.conf
 sed -i "s/\${BACKEND_PORT}/${PORT:-3000}/g" /etc/nginx/conf.d/default.conf
 
 echo "Generated config.js contents:"

@@ -113,8 +113,11 @@ docker-compose logs backend
 ### Container Communication Issues
 ```bash
 # Test internal network connectivity
-docker-compose exec frontend ping backend
-docker-compose exec frontend curl http://backend:3000/health
+docker-compose exec react-frontend ping react-backend
+docker-compose exec react-frontend curl http://backend:3000/health
+
+# If using different container names, override the backend host
+BACKEND_HOST=react-backend docker-compose up -d
 ```
 
 ## Development vs Testing
