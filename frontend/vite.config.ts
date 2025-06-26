@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import path from "path"
 import react from "@vitejs/plugin-react-swc"
 import { defineConfig, loadEnv } from "vite"
@@ -19,10 +20,15 @@ export default defineConfig(({ mode }) => {
       server: {
         proxy: {
           '/api': {
-            target: 'http://localhost:5000',
+            target: 'http://localhost:3000',
             changeOrigin: true
           }
         }
+      },
+      test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: ['./src/test/setup.ts'],
       }
     }
 })
