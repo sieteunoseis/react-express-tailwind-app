@@ -1,18 +1,21 @@
 # Docker Compose for Development Testing
 # This uses local builds instead of pulling from registry
 
-version: '3.8'
+name: react-express-tailwind-app
 
 services:
   frontend:
     build:
       context: ../frontend
       dockerfile: Dockerfile
+    container_name: react-frontend
     ports:
       - "3000:80"
     networks:
       - app-network
     environment:
+      - PORT=${PORT:-3000}
+      - BACKEND_HOST=${BACKEND_HOST:-backend}
       - VITE_API_URL=http://backend:${PORT:-3000}
       - VITE_BRANDING_NAME=${VITE_BRANDING_NAME:-Automate Builders}
       - VITE_BRANDING_URL=${VITE_BRANDING_URL:-https://automate.builders}
@@ -24,6 +27,7 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile
+    container_name: react-backend
     expose:
       - "${PORT:-3000}"
     ports:
