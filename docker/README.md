@@ -4,10 +4,17 @@ This folder contains Docker Compose configuration for testing the application wi
 
 ## Quick Start
 
+### Download Docker Compose File
 ```bash
-# Navigate to docker folder
-cd docker
+# Download docker-compose.yml directly from GitHub
+wget https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/main/docker/docker-compose.yml
 
+# Or download entire docker folder
+wget -r --no-parent --reject="index.html*" https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/main/docker/
+```
+
+### Run Application
+```bash
 # Start the application
 docker-compose up -d
 
