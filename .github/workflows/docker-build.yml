@@ -92,9 +92,9 @@ jobs:
           fi
         fi
         cp .env .env.test
-        # Use the images we just built
-        export FRONTEND_TAG=${{ github.sha }}
-        export BACKEND_TAG=${{ github.sha }}
+        # Use the latest images
+        export FRONTEND_TAG=latest
+        export BACKEND_TAG=latest
         
         # Start services
         docker compose up -d
