@@ -17,6 +17,21 @@ Before using this script, ensure you have:
 - `hub` CLI tool installed ([installation guide](https://github.com/github/hub#installation))
 - GitHub authentication configured for hub
 
+## Quick Download and Usage
+
+Download the script directly from GitHub using wget:
+
+```bash
+# Download the script directly from GitHub
+wget -O git-template-remote.sh https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/refs/heads/main/scripts/git-template-remote.sh
+
+# Make it executable
+chmod +x git-template-remote.sh
+
+# Use the script
+./git-template-remote.sh <template-repo-url> <new-project-name>
+```
+
 ## Usage
 
 ```bash
