@@ -6,6 +6,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Create a temporary .env file for the build process
+RUN echo "PORT=3000" > ../.env
+RUN echo "VITE_API_URL=/api" >> ../.env
+
 RUN npm run build
 
 # Step 2: Serve the application using Nginx
