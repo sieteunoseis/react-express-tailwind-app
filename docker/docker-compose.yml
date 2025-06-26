@@ -1,8 +1,6 @@
 # Docker Compose for Testing with Pre-built Images
 # This pulls images from GitHub Container Registry for testing purposes
 
-version: '3.8'
-
 services:
   frontend:
     image: ghcr.io/sieteunoseis/react-express-tailwind-app/frontend:latest

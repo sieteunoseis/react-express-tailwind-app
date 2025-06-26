@@ -9,8 +9,8 @@ on:
 env:
   REGISTRY: ghcr.io
   # Change these to match your project name
-  FRONTEND_NAME: boilerplate-frontend
-  BACKEND_NAME: boilerplate-backend
+  FRONTEND_NAME: react-express-tailwind-app/frontend
+  BACKEND_NAME: react-express-tailwind-app/backend
   # GitHub automatically provides this variable
   OWNER: ${{ github.repository_owner }}
 
@@ -24,6 +24,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -42,6 +48,7 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Extract metadata for Backend
         id: meta-backend
@@ -53,11 +60,13 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push Frontend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
@@ -66,6 +75,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-backend.outputs.tags }}
           labels: ${{ steps.meta-backend.outputs.labels }}

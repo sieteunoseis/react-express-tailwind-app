@@ -67,6 +67,30 @@ docker-compose up -d    # Start fresh
 
 ## Troubleshooting
 
+### Apple Silicon (ARM64) Support
+Pre-built images support both AMD64 and ARM64 architectures. If you encounter issues with the pre-built images, build locally:
+
+```bash
+# Clone the repository
+git clone https://github.com/sieteunoseis/react-express-tailwind-app.git
+cd react-express-tailwind-app
+
+# Create .env file (optional, has sensible defaults)
+cp .env.example .env
+
+# Build and run locally using root docker-compose.yaml
+docker-compose -f docker-compose.yaml up -d --build
+```
+
+Or download just the build compose file:
+```bash
+# Download the local build version
+wget https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/main/docker-compose.yaml
+
+# Build and run
+docker-compose -f docker-compose.yaml up -d --build
+```
+
 ### Image Pull Issues
 If images aren't available in GitHub Container Registry yet:
 ```bash
