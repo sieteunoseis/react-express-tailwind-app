@@ -8,7 +8,7 @@ const fs = require("fs");
 dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = 3000;
 const TABLE_COLUMNS = process.env.VITE_TABLE_COLUMNS || "name, hostname, username, password, version";
 
 // Enable CORS
