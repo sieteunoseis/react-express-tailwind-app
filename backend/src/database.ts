@@ -245,12 +245,60 @@ export class Database {
 
   deleteConnection(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.db.run('DELETE FROM connections WHERE id = ?', [id], function (err) {
+      // Check if this is the selected connection before deleting
+      this.db.get('SELECT selected FROM connections WHERE id = ?', [id], (err, row: any) => {
         if (err) {
-          Logger.error('Failed to delete connection:', err);
+          Logger.error('Failed to check if connection is selected:', err);
           reject(err);
+          return;
+        }
+
+        const wasSelected = row?.selected === 'YES';
+
+        this.db.run('DELETE FROM connections WHERE id = ?', [id], (err) => {
+          if (err) {
+            Logger.error('Failed to delete connection:', err);
+            reject(err);
+          } else {
+            Logger.info(`Deleted connection with ID: ${id}`);
+            
+            // If the deleted connection was selected, auto-select the first remaining one
+            if (wasSelected) {
+              this.autoSelectFirstConnection().then(() => {
+                resolve();
+              }).catch((selectErr: any) => {
+                Logger.warn('Failed to auto-select first connection after deletion:', selectErr);
+                // Don't fail the delete operation if auto-selection fails
+                resolve();
+              });
+            } else {
+              resolve();
+            }
+          }
+        });
+      });
+    });
+  }
+
+  private autoSelectFirstConnection(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.db.get('SELECT id FROM connections ORDER BY id ASC LIMIT 1', [], (err, row: any) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        if (row) {
+          this.db.run('UPDATE connections SET selected = ? WHERE id = ?', ['YES', row.id], (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              Logger.info(`Auto-selected connection with ID: ${row.id}`);
+              resolve();
+            }
+          });
         } else {
-          Logger.info(`Deleted connection with ID: ${id}`);
+          // No connections left, nothing to select
           resolve();
         }
       });
@@ -259,23 +307,59 @@ export class Database {
 
   selectConnection(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.db.serialize(() => {
-        this.db.run('UPDATE connections SET selected = NULL', [], (err) => {
+      // Use a transaction to ensure atomicity
+      this.db.run('BEGIN TRANSACTION', (err) => {
+        if (err) {
+          Logger.error('Failed to start transaction:', err);
+          reject(err);
+          return;
+        }
+
+        // First, verify the connection exists
+        this.db.get('SELECT id FROM connections WHERE id = ?', [id], (err, row) => {
           if (err) {
-            Logger.error('Failed to clear selected connections:', err);
+            this.db.run('ROLLBACK');
+            Logger.error('Failed to verify connection exists:', err);
             reject(err);
             return;
           }
-        });
 
-        this.db.run('UPDATE connections SET selected = "YES" WHERE id = ?', [id], function (err) {
-          if (err) {
-            Logger.error('Failed to select connection:', err);
-            reject(err);
-          } else {
-            Logger.info(`Selected connection with ID: ${id}`);
-            resolve();
+          if (!row) {
+            this.db.run('ROLLBACK');
+            Logger.error(`Connection with ID ${id} not found`);
+            reject(new Error(`Connection with ID ${id} not found`));
+            return;
           }
+
+          // Clear all selections
+          this.db.run('UPDATE connections SET selected = NULL', [], (err) => {
+            if (err) {
+              this.db.run('ROLLBACK');
+              Logger.error('Failed to clear selected connections:', err);
+              reject(err);
+              return;
+            }
+
+            // Set the new selection
+            this.db.run('UPDATE connections SET selected = ? WHERE id = ?', ['YES', id], (err) => {
+              if (err) {
+                this.db.run('ROLLBACK');
+                Logger.error('Failed to select connection:', err);
+                reject(err);
+              } else {
+                // Commit the transaction
+                this.db.run('COMMIT', (err) => {
+                  if (err) {
+                    Logger.error('Failed to commit transaction:', err);
+                    reject(err);
+                  } else {
+                    Logger.info(`Selected connection with ID: ${id}`);
+                    resolve();
+                  }
+                });
+              }
+            });
+          });
         });
       });
     });
