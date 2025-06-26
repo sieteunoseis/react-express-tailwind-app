@@ -86,14 +86,27 @@ npm run dev  # Starts both frontend and backend in development mode
 
 ### 5. Build and run with Docker
 
+#### Local Development Docker
 ```bash
-# Build and run with Docker Compose
-npm run build
+# Build and run with Docker Compose (builds locally)
+npm run build  # or docker-compose up --build
 
-# Or run individual commands
+# Individual commands
 docker-compose up --build   # Build and start containers
 docker-compose up           # Start existing containers  
 docker-compose down         # Stop containers
+```
+
+#### Testing with Pre-built Images
+For testing with images from GitHub Container Registry:
+```bash
+cd docker
+./test.sh          # Test with pre-built images
+./test.sh --dev     # Test with local builds
+
+# Manual Docker Compose
+docker-compose up -d                    # Use pre-built images
+docker-compose -f docker-compose.dev.yml up -d  # Use local builds
 ```
 
 ### 6. Build for production (manual)
