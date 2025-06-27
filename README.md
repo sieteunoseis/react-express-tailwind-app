@@ -13,14 +13,50 @@ A secure, full-stack React application template with TypeScript, Express.js back
 - **🐳 Docker Ready**: Containerized deployment with Docker Compose
 - **🔄 Version Control**: Template synchronization with upstream changes
 
+## 🎨 Background Logo Customization
+
+The application supports customizable background logos that can display either text or [Lucide icons](https://lucide.dev/):
+
+### Text Logo
+Set `VITE_BACKGROUND_LOGO_TEXT` to any text value:
+```bash
+VITE_BACKGROUND_LOGO_TEXT="AB"           # Displays "AB" as background text
+VITE_BACKGROUND_LOGO_TEXT="MyApp"        # Displays "MyApp" as background text
+```
+
+### Lucide Icon Logo
+Prefix with `lucide-` to use any Lucide icon:
+```bash 
+VITE_BACKGROUND_LOGO_TEXT="lucide-settings"    # Settings icon
+VITE_BACKGROUND_LOGO_TEXT="lucide-database"    # Database icon
+VITE_BACKGROUND_LOGO_TEXT="lucide-server"      # Server icon
+```
+
+The logo automatically:
+- Adjusts font size based on text length
+- Supports dark/light theme switching
+- Displays at low opacity (10%) as a background element
+- Scales responsively across different screen sizes
+
+Browse available icons at [lucide.dev](https://lucide.dev/) and use the icon name with the `lucide-` prefix.
+
 ## How to use
 
 ### 1. Download script file and clone this template
-```
+```bash
 wget -O git-template-remote.sh https://raw.githubusercontent.com/sieteunoseis/react-express-tailwind-app/refs/heads/main/scripts/git-template-remote.sh
 chmod +x git-template-remote.sh
+
+# Standard clone (preserves template history for sync)
 ./git-template-remote.sh https://github.com/sieteunoseis/react-express-tailwind-app.git <your-project-name>
+
+# Fresh start (removes template history)
+./git-template-remote.sh --fresh https://github.com/sieteunoseis/react-express-tailwind-app.git <your-project-name>
 ```
+
+**Clone Options:**
+- **Standard**: Preserves template git history and allows syncing upstream changes with `npm run sync-remote`
+- **Fresh (`--fresh`)**: Starts with a clean git history containing only an "Initial commit from template"
 ### 2. Install dependencies
 ```
 npm run install-all
@@ -69,6 +105,7 @@ NODE_ENV=development         # Environment mode
 # Application Branding
 VITE_BRANDING_NAME="Your Company Name"
 VITE_BRANDING_URL="https://yourcompany.com"
+VITE_BACKGROUND_LOGO_TEXT="AB"          # Background logo text or Lucide icon (e.g., "lucide-settings")
 
 # Database Schema
 VITE_TABLE_COLUMNS=name,hostname,username,password,version
@@ -137,6 +174,8 @@ cd frontend && npm run build       # Includes type checking
 ```bash
 npm run sync-remote  # Pulls latest template updates
 ```
+
+**Note**: This command only works if you cloned using the standard method (without `--fresh` flag). Projects created with `--fresh` don't have the upstream remote configured for syncing.
 
 ## 🔧 Development Guide
 
