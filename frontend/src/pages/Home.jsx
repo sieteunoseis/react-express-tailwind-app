@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import BackgroundLogo from "@/components/BackgroundLogo";
 import { apiCall } from "@/lib/api";
+import templateConfig from "../../template.config.json";
 // import { useConfig } from '@/config/ConfigContext';
 
 const Home = () => {
@@ -18,6 +19,15 @@ const Home = () => {
 
   // Fetch initial connections
   useEffect(() => {
+    if (!templateConfig.useBackend) {
+      // Skip API call if backend is disabled
+      setConnectionState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+      return;
+    }
+
     const fetchResults = async () => {
       try {
         const response = await apiCall('/data');
@@ -44,7 +54,7 @@ const Home = () => {
     };
 
     fetchResults();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-full w-full py-20 relative bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-indigo-950">

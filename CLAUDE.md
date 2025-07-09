@@ -110,9 +110,22 @@ Backend requires environment variables matching `dbSetup.json` field names. Set 
 - `.env` file for local development
 - `docker-compose.yaml` for containerized deployment
 
-## Template Synchronization
+## Template Configuration
 
-This is a template repository. Sync upstream changes:
+This is a configurable template repository. Configure for your project needs:
+
+### Setup Template
+```bash
+npm run setup-template  # Apply template configuration
+```
+
+### Configuration Options
+Edit `template.config.json` to customize:
+- `useBackend`: Enable/disable backend and connections page
+- `databaseType`: Choose "cucm" (with version) or "cuc" (without version)
+
+### Template Synchronization
+Sync upstream changes:
 ```bash
 npm run sync-remote  # Pulls from upstream main branch
 ```

@@ -6,6 +6,7 @@ import ErrorPage from "./pages/Error";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 import { Toaster } from "@/components/ui/toaster";
+import templateConfig from "../template.config.json";
 
 function App() {
   return (
